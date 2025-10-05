@@ -315,11 +315,11 @@
                         </select>
                     </label>
                     <label>Сколько пачек/рулонов ткани ушло на настил? 
-                        <input type="number" class="packs-count" min="1">
+                        <input type="number" class="packs-count" min="1" inputmode="decimal">
                     </label>
                     <div class="weights-container"></div>
                     <label>Укажите кол-во слоев в настиле: 
-                        <input type="number" class="layers" min="1">
+                        <input type="number" class="layers" min="1" inputmode="decimal">
                     </label>
                     <table class="kroy-table">
                         <thead>
@@ -375,6 +375,7 @@
                     input.min = '0';
                     input.className = 'weights-input';
                     input.placeholder = `Вес пачки ${i} (кг)`;
+                    input.inputMode = 'decimal';
                     weightsContainer.appendChild(input);
                 }
             }
@@ -429,6 +430,7 @@
                     qtyInput.type = 'number';
                     qtyInput.placeholder = 'Кол-во';
                     qtyInput.min = '1';
+                    qtyInput.inputMode = 'decimal';
                     qtyCell.appendChild(qtyInput);
                     row.appendChild(qtyCell);
                     tbody.appendChild(row);
@@ -446,6 +448,7 @@
                     qtyInput.min = '0';
                     qtyInput.step = '1';
                     qtyInput.placeholder = 'Кол-во';
+                    qtyInput.inputMode = 'decimal';
                     qtyCell.appendChild(qtyInput);
                     row.appendChild(qtyCell);
                     tbody.appendChild(row);
@@ -609,11 +612,11 @@
                                 ${FABRIC_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
                             </select>
                         </label>
-                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1"></label>
+                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1" inputmode="decimal"></label>
                     `;
                 } else if (op === 'Нарезка бейки') {
                     container.innerHTML = `
-                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1"></label>
+                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1" inputmode="decimal"></label>
                     `;
                 } else if (op === 'Отгрузка') {
                     container.innerHTML = `
@@ -629,8 +632,8 @@
                     addRow('otgruzka');
                 } else if (op === 'Почасовая оплата') {
                     container.innerHTML = `
-                        <label>Кол-во часов работы: <input type="number" id="hours" min="0" step="0.1"></label>
-                        <label>Оклад за 6 дней работы по 8 часов: <input type="number" id="salary" min="0" step="0.01"></label>
+                        <label>Кол-во часов работы: <input type="number" id="hours" min="0" step="0.1" inputmode="decimal"></label>
+                        <label>Оклад за 6 дней работы по 8 часов: <input type="number" id="salary" min="0" step="0.01" inputmode="decimal"></label>
                     `;
                 }
             }
@@ -707,6 +710,13 @@
                 Telegram.WebApp.close();
             }
 
+            // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && event.target.tagName === 'INPUT') {
+                    event.target.blur();
+                }
+            });
+
             window.showStep = showStep;
             window.addNastil = addNastil;
             window.removeNastil = removeNastil;
@@ -721,5 +731,6 @@
     </script>
 </body>
 </html>
+
 
 
