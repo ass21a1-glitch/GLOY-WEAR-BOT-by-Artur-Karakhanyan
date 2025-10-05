@@ -321,11 +321,11 @@
                         </select>
                     </label>
                     <label>Сколько пачек/рулонов ткани ушло на настил? 
-                        <input type="number" class="packs-count" min="1" inputmode="decimal" enterkeyhint="done">
+                        <input type="number" class="packs-count" min="1" inputmode="numeric" enterkeyhint="done">
                     </label>
                     <div class="weights-container"></div>
                     <label>Укажите кол-во слоев в настиле: 
-                        <input type="number" class="layers" min="1" inputmode="decimal" enterkeyhint="done">
+                        <input type="number" class="layers" min="1" inputmode="numeric" enterkeyhint="done">
                     </label>
                     <table class="kroy-table">
                         <thead>
@@ -439,7 +439,7 @@
                     qtyInput.type = 'number';
                     qtyInput.placeholder = 'Кол-во';
                     qtyInput.min = '1';
-                    qtyInput.inputMode = 'decimal';
+                    qtyInput.inputMode = 'numeric';
                     qtyInput.enterKeyHint = 'done';
                     qtyCell.appendChild(qtyInput);
                     row.appendChild(qtyCell);
@@ -458,7 +458,7 @@
                     qtyInput.min = '0';
                     qtyInput.step = '1';
                     qtyInput.placeholder = 'Кол-во';
-                    qtyInput.inputMode = 'decimal';
+                    qtyInput.inputMode = 'numeric';
                     qtyInput.enterKeyHint = 'done';
                     qtyCell.appendChild(qtyInput);
                     row.appendChild(qtyCell);
@@ -625,11 +625,11 @@
                                 ${FABRIC_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
                             </select>
                         </label>
-                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1" inputmode="decimal" enterkeyhint="done"></label>
+                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1" inputmode="numeric" enterkeyhint="done"></label>
                     `;
                 } else if (op === 'Нарезка бейки') {
                     container.innerHTML = `
-                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1" inputmode="decimal" enterkeyhint="done"></label>
+                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1" inputmode="numeric" enterkeyhint="done"></label>
                     `;
                 } else if (op === 'Отгрузка') {
                     container.innerHTML = `
@@ -744,6 +744,7 @@
     </script>
 </body>
 </html>
+
 
 
 
