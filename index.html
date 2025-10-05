@@ -146,9 +146,9 @@
         <button id="next-op" class="disabled">Далее</button>
     </div>
 
-    <!-- Объединенный шаг для Крой -->
+    <!-- Объединенный шаг для Крой и Срез -->
     <div id="kroy-step" class="step">
-        <h2>Отчет по операции Крой</h2>
+        <h2>Отчет по операции <span id="operation-name"></span></h2>
         <div id="nastil-container">
             <!-- Секции для каждого настила добавляются динамически -->
         </div>
@@ -249,6 +249,13 @@
             // Обработчик для кнопки "Назад"
             document.addEventListener('click', function(event) {
                 if (event.target.classList.contains('back-btn')) {
+                    // Сбрасываем данные при возврате назад
+                    data.operation = null;
+                    data.nastils = [];
+                    nastilCounter = 0;
+                    document.getElementById('nastil-container').innerHTML = '';
+                    document.getElementById('special-container').innerHTML = '';
+                    document.getElementById('other-tbody').innerHTML = '';
                     showStep('operation-step');
                 }
             });
@@ -264,11 +271,12 @@
                 const op = document.getElementById('operation-select').value;
                 if (!op) return;
                 data.operation = op;
-                if (op === 'Крой') {
+                if (op === 'Крой' || op === 'Срез') {
                     nastilCounter = 0;
                     data.nastils = [];
                     showStep('kroy-step');
-                    addNastil();
+                    document.getElementById('operation-name').textContent = op;
+                    addNastil();  // Добавить первый настил
                 } else if (['Настил', 'Нарезка бейки', 'Отгрузка', 'Почасовая оплата'].includes(op)) {
                     showStep('special-fields');
                     initSpecial(op);
@@ -536,7 +544,7 @@
 
             function addOperation() {
                 const report = { operation: data.operation };
-                if (data.operation === 'Крой') {
+                if (data.operation === 'Крой' || data.operation === 'Срез') {
                     report.nastils = [];
                     for (let i = 1; i <= nastilCounter; i++) {
                         const section = document.getElementById(`nastil-${i}`);
@@ -654,7 +662,7 @@
             function submitReport() {
                 if (data.operation) {
                     const report = { operation: data.operation };
-                    if (data.operation === 'Крой') {
+                    if (data.operation === 'Крой' || data.operation === 'Срез') {
                         report.nastils = [];
                         for (let i = 1; i <= nastilCounter; i++) {
                             const section = document.getElementById(`nastil-${i}`);
@@ -744,6 +752,7 @@
     </script>
 </body>
 </html>
+
 
 
 
