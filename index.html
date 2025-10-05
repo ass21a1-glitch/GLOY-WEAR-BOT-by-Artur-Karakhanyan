@@ -1,687 +1,99 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
     <title>Ежедневный отчет</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            padding: 15px; 
-            font-size: 16px; 
-            line-height: 1.5; 
-        }
+        body { font-family: Arial, sans-serif; padding: 20px; }
         .step { display: none; }
         .active { display: block; }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 10px; 
-            font-size: 14px; 
-            display: block; 
-            overflow-x: auto; 
-        }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 10px; 
-            text-align: center; 
-            white-space: nowrap; 
-        }
-        button { 
-            margin: 10px 5px; 
-            padding: 12px 20px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            min-height: 44px; 
-            border: none; 
-            border-radius: 4px; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-        .disabled { 
-            background-color: gray; 
-            color: white; 
-            pointer-events: none; 
-        }
-        .enabled { 
-            background-color: blue; 
-            color: white; 
-        }
-        input, select { 
-            margin: 5px; 
-            padding: 10px; 
-            font-size: 16px; 
-            min-height: 44px; 
-            width: 100%; 
-            box-sizing: border-box; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-        }
-        label { 
-            display: block; 
-            margin-bottom: 15px; 
-            font-weight: bold; 
-        }
-        .weights-input { 
-            margin-bottom: 8px; 
-            width: 100%; 
-        }
-        .back-btn { 
-            background-color: #6c757d; 
-            color: white; 
-            padding: 12px 20px; 
-            border: none; 
-            cursor: pointer; 
-            margin-left: 10px; 
-            min-height: 44px; 
-        }
-        .back-btn:hover { background-color: #545b62; }
-        .nastil-section { 
-            border: 1px solid #ccc; 
-            padding: 15px; 
-            margin-bottom: 20px; 
-            border-radius: 5px; 
-        }
-        .remove-nastil-btn { 
-            background-color: red; 
-            color: white; 
-            padding: 8px 15px; 
-            border: none; 
-            cursor: pointer; 
-            margin-top: 10px; 
-            min-height: 44px; 
-        }
-        .remove-nastil-btn:hover { background-color: darkred; }
-        /* Новый стиль для выравнивания кнопок "Добавить операцию" и "Отправить отчет" */
-        .button-row {
-            display: flex;
-            justify-content: flex-start;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-                font-size: 18px;
-            }
-            button, input, select {
-                font-size: 18px;
-                min-height: 50px;
-            }
-            table {
-                font-size: 16px;
-            }
-            th, td {
-                padding: 12px;
-            }
-        }
+        select { min-height: 44px; width: 100%; font-size: 16px; }
+        button { margin-top: 10px; padding: 10px; cursor: pointer; }
+        button.disabled { background-color: gray; color: white; pointer-events: none; }
+        button.enabled { background-color: blue; color: white; }
     </style>
 </head>
 <body>
-
-    <div id="operation-step" class="step active">
-        <h2>Выберите операцию</h2>
-        <select id="operation-select">
-            <option value="">Выберите...</option>
-        </select>
-        <button id="next-op" class="disabled">Далее</button>
-    </div>
-
-    <!-- Объединенный шаг для Крой -->
-    <div id="kroy-step" class="step">
-        <h2>Отчет по операции Крой</h2>
-        <div id="nastil-container">
-            <!-- Секции для каждого настила добавляются динамически -->
-        </div>
-        <button onclick="addNastil()">Добавить настил</button>
-        <button class="back-btn">Назад</button>
-        <div class="button-row">
-            <button onclick="addOperation()">Добавить операцию</button>
-            <button onclick="submitReport()">Отправить отчет</button>
-        </div>
-    </div>
-
-    <!-- Шаги для других операций -->
-    <div id="other-table-step" class="step">
-        <h2 id="other-title">Отчет по операции ...</h2>
-        <table id="other-table">
-            <thead>
-                <tr><th>Номер пачки</th><th>Артикул</th><th>Цвет</th><th>Размер</th><th>Кол-во</th></tr>
-            </thead>
-            <tbody id="other-tbody"></tbody>
-        </table>
-        <button class="back-btn">Назад</button>
-        <button onclick="addRow('other')">Добавить строку</button>
-        <button onclick="removeRow('other')">Удалить строку</button>
-        <div class="button-row">
-            <button onclick="addOperation()">Добавить операцию</button>
-            <button onclick="submitReport()">Отправить отчет</button>
-        </div>
-    </div>
-
-    <!-- Специальные поля для Настил, Нарезка бейки, Отгрузка, Почасовая оплата -->
-    <div id="special-fields" class="step">
-        <div id="special-container"></div>
-        <button class="back-btn">Назад</button>
-        <div class="button-row">
-            <button onclick="addOperation()">Добавить операцию</button>
-            <button onclick="submitReport()">Отправить отчет</button>
-        </div>
-    </div>
+    <h2>Выберите операцию</h2>
+    <select id="operation-select">
+        <option value="">Выберите...</option>
+    </select>
+    <br />
+    <button id="next-op" class="disabled" disabled>Далее</button>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            // Константы (из Python)
-            const OPERATIONS = [
-                "Настил", "Срез", "Крой", "Оверлок", "Закрепка", "Распошив", "Горло", "Бейка",
-                "Нарезка бейки", "Упаковка", "Отгрузка", "Заготовка пояса", "Пояс Заира", "Пояс",
-                "Резинка", "Карман", "Подшивка низ", "Стрелка", "Переупаковка", "Выворачивание",
-                "Перемаркировка", "Заготовка", "Почасовая оплата"
-            ];
-            const FABRIC_TYPES = ["кашкорсе", "футер двухнитка", "футер трехнитка"];
-            const FABRIC_COLORS = ["black", "white", "gray", "pink"];
-            const ARTIKULS = Array.from({length: 36}, (_, i) => `${(i+1).toString().padStart(2, '0')}/`);
-            const SIZES = ["38", "40", "42", "44", "46", "48", "50"];
-            const PACK_SIZES = ["0,5", "1"];
+        // Полный список операций
+        const OPERATIONS = [
+            "Настил", "Срез", "Крой", "Оверлок", "Закрепка", "Распошив", "Горло", "Бейка",
+            "Нарезка бейки", "Упаковка", "Отгрузка", "Заготовка пояса", "Пояс Заира", "Пояс",
+            "Резинка", "Карман", "Подшивка низ", "Стрелка", "Переупаковка", "Выворачивание",
+            "Перемаркировка", "Заготовка", "Почасовая оплата"
+        ];
 
-            // Глобальные переменные
-            let currentStep = 'operation-step';
-            let data = { reports: [] };
-            let nastilCounter = 0;
-
-            // Инициализация Telegram Web App
-            Telegram.WebApp.ready();
-            const initData = Telegram.WebApp.initDataUnsafe;
-            let userOperations = OPERATIONS;
-            if (initData && initData.user) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const ops = urlParams.get('operations');
-                console.log('ops from URL:', ops); // Отладка
-                if (ops && ops.trim()) {
-                    userOperations = decodeURIComponent(ops).split(',').map(op => op.trim()).filter(op => op);
-                }
+        // Получаем параметр operations из URL
+        function getOperationsFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            let ops = params.get('operations');
+            if (!ops) return null;
+            try {
+                // Декодируем и разбиваем по запятой
+                return decodeURIComponent(ops).split(',').map(op => op.trim()).filter(op => op);
+            } catch(e) {
+                console.error('Ошибка декодирования operations из URL:', e);
+                return null;
             }
-            console.log('userOperations after init:', userOperations.length, userOperations); // Отладка
+        }
 
-            // Заполняем селект
-            const opSelect = document.getElementById('operation-select');
-            if (opSelect && userOperations.length > 0) {
-                opSelect.innerHTML = '<option value="">Выберите...</option>';
-                userOperations.forEach(op => {
-                    const option = document.createElement('option');
-                    option.value = op;
-                    option.textContent = op;
-                    opSelect.appendChild(option);
-                });
-                console.log('Options added, total options:', opSelect.options.length); // Отладка
-            }
+        // Заполняем селект операциями
+        function fillOperationsSelect(ops) {
+            const select = document.getElementById('operation-select');
+            select.innerHTML = '<option value="">Выберите...</option>';
+            ops.forEach(op => {
+                const option = document.createElement('option');
+                option.value = op;
+                option.textContent = op;
+                select.appendChild(option);
+            });
+            console.log('Заполнено операций:', ops.length, ops);
+            alert('Количество операций: ' + ops.length + '\n' + ops.join(', '));
+        }
 
-            // Функция показа шага
-            function showStep(stepId) {
-                document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-                document.getElementById(stepId).classList.add('active');
-                currentStep = stepId;
+        // Основной код инициализации
+        document.addEventListener('DOMContentLoaded', () => {
+            let userOperations = getOperationsFromUrl();
+
+            if (!userOperations || userOperations.length === 0) {
+                console.log('Operations из URL отсутствуют или пусты, используем полный список');
+                userOperations = OPERATIONS;
             }
 
-            // Обработчик для кнопки "Назад"
-            document.addEventListener('click', function(event) {
-                if (event.target.classList.contains('back-btn')) {
-                    showStep('operation-step');
+            fillOperationsSelect(userOperations);
+
+            const select = document.getElementById('operation-select');
+            const nextBtn = document.getElementById('next-op');
+
+            select.addEventListener('change', () => {
+                const val = select.value;
+                if (val) {
+                    nextBtn.classList.remove('disabled');
+                    nextBtn.classList.add('enabled');
+                    nextBtn.disabled = false;
+                } else {
+                    nextBtn.classList.add('disabled');
+                    nextBtn.classList.remove('enabled');
+                    nextBtn.disabled = true;
                 }
             });
 
-            // Обработчики для выбора операции
-            document.getElementById('operation-select').addEventListener('change', function() {
-                const btn = document.getElementById('next-op');
-                btn.classList.toggle('disabled', !this.value);
-                btn.classList.toggle('enabled', !!this.value);
+            nextBtn.addEventListener('click', () => {
+                const selectedOp = select.value;
+                if (!selectedOp) return alert('Пожалуйста, выберите операцию');
+                alert('Вы выбрали операцию: ' + selectedOp);
+                // Здесь можно продолжить логику перехода к следующему шагу
             });
-
-            document.getElementById('next-op').addEventListener('click', function() {
-                const op = document.getElementById('operation-select').value;
-                if (!op) return;
-                data.operation = op;
-                if (op === 'Крой') {
-                    nastilCounter = 0;
-                    data.nastils = [];
-                    showStep('kroy-step');
-                    addNastil();
-                } else if (['Настил', 'Нарезка бейки', 'Отгрузка', 'Почасовая оплата'].includes(op)) {
-                    showStep('special-fields');
-                    initSpecial(op);
-                } else {
-                    showStep('other-table-step');
-                    initOther(op);
-                }
-            });
-
-            // Функция добавления секции для настила
-            function addNastil() {
-                nastilCounter++;
-                const container = document.getElementById('nastil-container');
-                const section = document.createElement('div');
-                section.className = 'nastil-section';
-                section.id = `nastil-${nastilCounter}`;
-                section.innerHTML = `
-                    <h3>Настил ${nastilCounter}</h3>
-                    <label>Тип ткани: 
-                        <select class="fabric-type">
-                            <option value="">Выберите...</option>
-                            ${FABRIC_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
-                        </select>
-                    </label>
-                    <label>Цвет ткани: 
-                        <select class="fabric-color">
-                            <option value="">Выберите...</option>
-                            ${FABRIC_COLORS.map(c => `<option value="${c}">${c}</option>`).join('')}
-                        </select>
-                    </label>
-                    <label>Сколько пачек/рулонов ткани ушло на настил? 
-                        <input type="number" class="packs-count" min="1">
-                    </label>
-                    <div class="weights-container"></div>
-                    <label>Укажите кол-во слоев в настиле: 
-                        <input type="number" class="layers" min="1">
-                    </label>
-                    <table class="kroy-table">
-                        <thead>
-                            <tr><th>Номер пачки</th><th>Артикул</th><th>Размер</th><th>Размер пачки</th></tr>
-                        </thead>
-                        <tbody class="kroy-tbody"></tbody>
-                    </table>
-                    <button onclick="addRow(${nastilCounter})">Добавить строку</button>
-                    <button onclick="removeRow(${nastilCounter})">Удалить строку</button>
-                    <button class="remove-nastil-btn" onclick="removeNastil(${nastilCounter})">Удалить настил</button>
-                `;
-                container.appendChild(section);
-                addRow(nastilCounter);
-                section.querySelector('.packs-count').addEventListener('input', function() {
-                    updateWeights(nastilCounter);
-                });
-            }
-
-            // Функция удаления настила
-            function removeNastil(nastilId) {
-                const section = document.getElementById(`nastil-${nastilId}`);
-                if (section) {
-                    section.remove();
-                    const container = document.getElementById('nastil-container');
-                    const sections = container.querySelectorAll('.nastil-section');
-                    sections.forEach((sec, index) => {
-                        const newId = index + 1;
-                        sec.id = `nastil-${newId}`;
-                        sec.querySelector('h3').textContent = `Настил ${newId}`;
-                        sec.querySelector('.remove-nastil-btn').setAttribute('onclick', `removeNastil(${newId})`);
-                        sec.querySelector('button[onclick*="addRow"]').setAttribute('onclick', `addRow(${newId})`);
-                        sec.querySelector('button[onclick*="removeRow"]').setAttribute('onclick', `removeRow(${newId})`);
-                        const packsInput = sec.querySelector('.packs-count');
-                        packsInput.removeEventListener('input', updateWeights);
-                        packsInput.addEventListener('input', function() {
-                            updateWeights(newId);
-                        });
-                    });
-                    nastilCounter = sections.length;
-                }
-            }
-
-            // Функция обновления полей весов
-            function updateWeights(nastilId) {
-                const section = document.getElementById(`nastil-${nastilId}`);
-                const count = parseInt(section.querySelector('.packs-count').value) || 0;
-                const weightsContainer = section.querySelector('.weights-container');
-                weightsContainer.innerHTML = '<label>Укажите вес пачек/рулонов (в кг, через запятую для десятичных):</label>';
-                for (let i = 1; i <= count; i++) {
-                    const input = document.createElement('input');
-                    input.type = 'number';
-                    input.step = '0.01';
-                    input.min = '0';
-                    input.className = 'weights-input';
-                    input.placeholder = `Вес пачки ${i} (кг)`;
-                    weightsContainer.appendChild(input);
-                }
-            }
-
-            // Функция добавления строки в таблицу
-            function addRow(nastilId) {
-                let tbody;
-                if (nastilId === 'other') {
-                    tbody = document.getElementById('other-tbody');
-                    const row = document.createElement('tr');
-                    const packCell = document.createElement('td');
-                    const packInput = document.createElement('input');
-                    packInput.type = 'text';
-                    packInput.placeholder = 'Номер пачки';
-                    packCell.appendChild(packInput);
-                    row.appendChild(packCell);
-                    const artikulCell = document.createElement('td');
-                    const artikulSelect = document.createElement('select');
-                    artikulSelect.innerHTML = '<option value="">Выберите...</option>';
-                    ARTIKULS.forEach(a => {
-                        const option = document.createElement('option');
-                        option.value = a;
-                        option.textContent = a;
-                        artikulSelect.appendChild(option);
-                    });
-                    artikulCell.appendChild(artikulSelect);
-                    row.appendChild(artikulCell);
-                    const colorCell = document.createElement('td');
-                    const colorSelect = document.createElement('select');
-                    colorSelect.innerHTML = '<option value="">Выберите...</option>';
-                    ["black", "white", "pink", "gray"].forEach(c => {
-                        const option = document.createElement('option');
-                        option.value = c;
-                        option.textContent = c;
-                        colorSelect.appendChild(option);
-                    });
-                    colorCell.appendChild(colorSelect);
-                    row.appendChild(colorCell);
-                    const sizeCell = document.createElement('td');
-                    const sizeSelect = document.createElement('select');
-                    sizeSelect.innerHTML = '<option value="">Выберите...</option>';
-                    SIZES.forEach(s => {
-                        const option = document.createElement('option');
-                        option.value = s;
-                        option.textContent = s;
-                        sizeSelect.appendChild(option);
-                    });
-                    sizeCell.appendChild(sizeSelect);
-                    row.appendChild(sizeCell);
-                    const qtyCell = document.createElement('td');
-                    const qtyInput = document.createElement('input');
-                    qtyInput.type = 'number';
-                    qtyInput.placeholder = 'Кол-во';
-                    qtyInput.min = '1';
-                    qtyCell.appendChild(qtyInput);
-                    row.appendChild(qtyCell);
-                    tbody.appendChild(row);
-                } else if (nastilId === 'otgruzka') {
-                    tbody = document.getElementById('otgruzka-tbody');
-                    const row = document.createElement('tr');
-                    const dateCell = document.createElement('td');
-                    const dateInput = document.createElement('input');
-                    dateInput.type = 'date';
-                    dateCell.appendChild(dateInput);
-                    row.appendChild(dateCell);
-                    const qtyCell = document.createElement('td');
-                    const qtyInput = document.createElement('input');
-                    qtyInput.type = 'number';
-                    qtyInput.min = '0';
-                    qtyInput.step = '1';
-                    qtyInput.placeholder = 'Кол-во';
-                    qtyCell.appendChild(qtyInput);
-                    row.appendChild(qtyCell);
-                    tbody.appendChild(row);
-                } else {
-                    tbody = document.querySelector(`#nastil-${nastilId} .kroy-tbody`);
-                    const row = document.createElement('tr');
-                    const packCell = document.createElement('td');
-                    const packInput = document.createElement('input');
-                    packInput.type = 'text';
-                    packInput.placeholder = 'Номер пачки';
-                    packCell.appendChild(packInput);
-                    row.appendChild(packCell);
-                    const artikulCell = document.createElement('td');
-                    const artikulSelect = document.createElement('select');
-                    artikulSelect.innerHTML = '<option value="">Выберите...</option>';
-                    ARTIKULS.forEach(a => {
-                        const option = document.createElement('option');
-                        option.value = a;
-                        option.textContent = a;
-                        artikulSelect.appendChild(option);
-                    });
-                    artikulCell.appendChild(artikulSelect);
-                    row.appendChild(artikulCell);
-                    const sizeCell = document.createElement('td');
-                    const sizeSelect = document.createElement('select');
-                    sizeSelect.innerHTML = '<option value="">Выберите...</option>';
-                    SIZES.forEach(s => {
-                        const option = document.createElement('option');
-                        option.value = s;
-                        option.textContent = s;
-                        sizeSelect.appendChild(option);
-                    });
-                    sizeCell.appendChild(sizeSelect);
-                    row.appendChild(sizeCell);
-                    const packSizeCell = document.createElement('td');
-                    const packSizeSelect = document.createElement('select');
-                    packSizeSelect.innerHTML = '<option value="">Выберите...</option>';
-                    PACK_SIZES.forEach(p => {
-                        const option = document.createElement('option');
-                        option.value = p;
-                        option.textContent = p;
-                        packSizeSelect.appendChild(option);
-                    });
-                    packSizeCell.appendChild(packSizeSelect);
-                    row.appendChild(packSizeCell);
-                    tbody.appendChild(row);
-                }
-            }
-
-            // Функция удаления строки из таблицы
-            function removeRow(identifier) {
-                let tbody;
-                if (typeof identifier === 'number') {
-                    tbody = document.querySelector(`#nastil-${identifier} .kroy-tbody`);
-                } else if (identifier === 'other') {
-                    tbody = document.getElementById('other-tbody');
-                } else if (identifier === 'otgruzka') {
-                    tbody = document.getElementById('otgruzka-tbody');
-                }
-                if (tbody && tbody.lastElementChild) {
-                    tbody.removeChild(tbody.lastElementChild);
-                }
-            }
-
-            // Инициализация для других операций
-            function initOther(op) {
-                document.getElementById('other-title').textContent = `Отчет по операции ${op}`;
-                const tbody = document.getElementById('other-tbody');
-                tbody.innerHTML = '';
-                addRow('other');
-            }
-
-            function addOperation() {
-                const report = { operation: data.operation };
-                if (data.operation === 'Крой') {
-                    report.nastils = [];
-                    for (let i = 1; i <= nastilCounter; i++) {
-                        const section = document.getElementById(`nastil-${i}`);
-                        if (!section) continue;
-                        const nastilData = {
-                            fabric_type: section.querySelector('.fabric-type').value,
-                            color: section.querySelector('.fabric-color').value,
-                            packs_count: parseInt(section.querySelector('.packs-count').value),
-                            weights: Array.from(section.querySelectorAll('.weights-input')).map(inp => inp.value),
-                            layers: parseInt(section.querySelector('.layers').value),
-                            table: []
-                        };
-                        const rows = section.querySelectorAll('.kroy-tbody tr');
-                        rows.forEach(row => {
-                            const inputs = row.querySelectorAll('input, select');
-                            const packNum = inputs[0].value;
-                            const artikul = inputs[1].value;
-                            const size = inputs[2].value;
-                            const packSize = inputs[3].value;
-                            if (packNum && artikul && size && packSize) {
-                                nastilData.table.push({ pack_num: packNum, artikul: artikul, size: size, pack_size: packSize });
-                            }
-                        });
-                        report.nastils.push(nastilData);
-                    }
-                } else if (['Настил', 'Нарезка бейки', 'Почасовая оплата'].includes(data.operation)) {
-                    report.special = {};
-                    const container = document.getElementById('special-container');
-                    const inputs = container.querySelectorAll('input, select');
-                    inputs.forEach(inp => {
-                        report.special[inp.id] = inp.value;
-                    });
-                } else if (data.operation === 'Отгрузка') {
-                    const tbody = document.getElementById('otgruzka-tbody');
-                    const rows = tbody.querySelectorAll('tr');
-                    const shipments = [];
-                    rows.forEach(row => {
-                        const inputs = row.querySelectorAll('input');
-                        const date = inputs[0].value;
-                        const qty = inputs[1].value;
-                        if (date && qty) {
-                            shipments.push({ date: date, qty: qty });
-                        }
-                    });
-                    report.special = { shipments: shipments };
-                } else {
-                    const tbody = document.getElementById('other-tbody');
-                    const rows = tbody.querySelectorAll('tr');
-                    const tableData = [];
-                    rows.forEach(row => {
-                        const inputs = row.querySelectorAll('input, select');
-                        const packNum = inputs[0].value;
-                        const artikul = inputs[1].value;
-                        const color = inputs[2].value;
-                        const size = inputs[3].value;
-                        const qty = inputs[4].value;
-                        if (packNum && artikul && color && size && qty) {
-                            tableData.push({ pack_num: packNum, artikul: artikul, color: color, size: size, qty: qty });
-                        }
-                    });
-                    report.table = tableData;
-                }
-                data.reports.push(report);
-                data.operation = null;
-                data.nastils = [];
-                nastilCounter = 0;
-                document.getElementById('nastil-container').innerHTML = '';
-                document.getElementById('special-container').innerHTML = '';
-                document.getElementById('other-tbody').innerHTML = '';
-                showStep('operation-step');
-                document.getElementById('operation-select').value = '';
-                document.getElementById('next-op').classList.remove('enabled');
-                document.getElementById('next-op').classList.add('disabled');
-                alert('Операция добавлена. Данные сохранены.');
-            }
-
-            // Инициализация для специальных операций
-            function initSpecial(op) {
-                const container = document.getElementById('special-container');
-                container.innerHTML = '';
-                if (op === 'Настил') {
-                    container.innerHTML = `
-                        <label>Тип ткани: 
-                            <select id="fabric-type-special">
-                                <option value="">Выберите...</option>
-                                ${FABRIC_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
-                            </select>
-                        </label>
-                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1"></label>
-                    `;
-                } else if (op === 'Нарезка бейки') {
-                    container.innerHTML = `
-                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1"></label>
-                    `;
-                } else if (op === 'Отгрузка') {
-                    container.innerHTML = `
-                        <table id="otgruzka-table">
-                            <thead>
-                                <tr><th>Дата отгрузки</th><th>Кол-во</th></tr>
-                            </thead>
-                            <tbody id="otgruzka-tbody"></tbody>
-                        </table>
-                        <button onclick="addRow('otgruzka')">Добавить отгрузку</button>
-                        <button onclick="removeRow('otgruzka')">Удалить строку</button>
-                    `;
-                    addRow('otgruzka');
-                } else if (op === 'Почасовая оплата') {
-                    container.innerHTML = `
-                        <label>Кол-во часов работы: <input type="number" id="hours" min="0" step="0.1"></label>
-                        <label>Оклад за 6 дней работы по 8 часов: <input type="number" id="salary" min="0" step="0.01"></label>
-                    `;
-                }
-            }
-
-            function submitReport() {
-                if (data.operation) {
-                    const report = { operation: data.operation };
-                    if (data.operation === 'Крой') {
-                        report.nastils = [];
-                        for (let i = 1; i <= nastilCounter; i++) {
-                            const section = document.getElementById(`nastil-${i}`);
-                            if (!section) continue;
-                            const nastilData = {
-                                fabric_type: section.querySelector('.fabric-type').value,
-                                color: section.querySelector('.fabric-color').value,
-                                packs_count: parseInt(section.querySelector('.packs-count').value),
-                                weights: Array.from(section.querySelectorAll('.weights-input')).map(inp => inp.value),
-                                layers: parseInt(section.querySelector('.layers').value),
-                                table: []
-                            };
-                            const rows = section.querySelectorAll('.kroy-tbody tr');
-                            rows.forEach(row => {
-                                const inputs = row.querySelectorAll('input, select');
-                                const packNum = inputs[0].value;
-                                const artikul = inputs[1].value;
-                                const size = inputs[2].value;
-                                const packSize = inputs[3].value;
-                                if (packNum && artikul && size && packSize) {
-                                    nastilData.table.push({ pack_num: packNum, artikul: artikul, size: size, pack_size: packSize });
-                                }
-                            });
-                            report.nastils.push(nastilData);
-                        }
-                    } else if (['Настил', 'Нарезка бейки', 'Почасовая оплата'].includes(data.operation)) {
-                        report.special = {};
-                        const container = document.getElementById('special-container');
-                        const inputs = container.querySelectorAll('input, select');
-                        inputs.forEach(inp => {
-                            report.special[inp.id] = inp.value;
-                        });
-                    } else if (data.operation === 'Отгрузка') {
-                        const tbody = document.getElementById('otgruzka-tbody');
-                        const rows = tbody.querySelectorAll('tr');
-                        const shipments = [];
-                        rows.forEach(row => {
-                            const inputs = row.querySelectorAll('input');
-                            const date = inputs[0].value;
-                            const qty = inputs[1].value;
-                            if (date && qty) {
-                                shipments.push({ date: date, qty: qty });
-                            }
-                        });
-                        report.special = { shipments: shipments };
-                    } else {
-                        const tbody = document.getElementById('other-tbody');
-                        const rows = tbody.querySelectorAll('tr');
-                        const tableData = [];
-                        rows.forEach(row => {
-                            const inputs = row.querySelectorAll('input, select');
-                            const packNum = inputs[0].value;
-                            const artikul = inputs[1].value;
-                            const color = inputs[2].value;
-                            const size = inputs[3].value;
-                            const qty = inputs[4].value;
-                            if (packNum && artikul && color && size && qty) {
-                                tableData.push({ pack_num: packNum, artikul: artikul, color: color, size: size, qty: qty });
-                            }
-                        });
-                        report.table = tableData;
-                    }
-                    data.reports.push(report);
-                }
-                Telegram.WebApp.sendData(JSON.stringify(data.reports));
-                Telegram.WebApp.close();
-            }
-
-            window.showStep = showStep;
-            window.addNastil = addNastil;
-            window.removeNastil = removeNastil;
-            window.updateWeights = updateWeights;
-            window.addRow = addRow;
-            window.removeRow = removeRow;
-            window.initOther = initOther;
-            window.addOperation = addOperation;
-            window.initSpecial = initSpecial;
-            window.submitReport = submitReport;
         });
     </script>
 </body>
 </html>
+
 
