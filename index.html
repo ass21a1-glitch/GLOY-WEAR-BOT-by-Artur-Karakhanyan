@@ -197,10 +197,12 @@
             if (initData && initData.user) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const ops = urlParams.get('operations');
+                console.log('ops from URL:', ops); // Отладка
                 if (ops && ops.trim()) {
-                    userOperations = ops.split(',').map(op => op.trim()).filter(op => op);
+                    userOperations = decodeURIComponent(ops).split(',').map(op => op.trim()).filter(op => op);
                 }
             }
+            console.log('userOperations after init:', userOperations.length, userOperations); // Отладка
 
             // Заполняем селект
             const opSelect = document.getElementById('operation-select');
@@ -212,6 +214,7 @@
                     option.textContent = op;
                     opSelect.appendChild(option);
                 });
+                console.log('Options added, total options:', opSelect.options.length); // Отладка
             }
 
             // Функция показа шага
@@ -681,3 +684,4 @@
     </script>
 </body>
 </html>
+
