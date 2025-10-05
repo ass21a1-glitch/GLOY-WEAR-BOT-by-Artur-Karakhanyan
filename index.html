@@ -111,6 +111,12 @@
             min-height: 44px; 
         }
         .toggle-btn:hover { background-color: #218838; }
+        /* Стиль для кнопки "Отправить отчет" */
+        .submit-btn {
+            background-color: blue; 
+            color: white; 
+        }
+        .submit-btn:hover { background-color: darkblue; }
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -150,7 +156,7 @@
         <button class="back-btn">Назад</button>
         <div class="button-row">
             <button onclick="addOperation()">Добавить операцию</button>
-            <button onclick="submitReport()">Отправить отчет</button>
+            <button class="submit-btn" onclick="submitReport()">Отправить отчет</button>
         </div>
     </div>
 
@@ -168,7 +174,7 @@
         <button onclick="removeRow('other')">Удалить строку</button>
         <div class="button-row">
             <button onclick="addOperation()">Добавить операцию</button>
-            <button onclick="submitReport()">Отправить отчет</button>
+            <button class="submit-btn" onclick="submitReport()">Отправить отчет</button>
         </div>
     </div>
 
@@ -178,7 +184,7 @@
         <button class="back-btn">Назад</button>
         <div class="button-row">
             <button onclick="addOperation()">Добавить операцию</button>
-            <button onclick="submitReport()">Отправить отчет</button>
+            <button class="submit-btn" onclick="submitReport()">Отправить отчет</button>
         </div>
     </div>
 
@@ -223,10 +229,10 @@
                 opSelect.innerHTML = '<option value="">Выберите...</option>';
                 ops.forEach(op => {
                     const option = document.createElement('option');
-                    option.value = op;
-                    option.textContent = op;
-                    opSelect.appendChild(option);
-                });
+                        option.value = op;
+                        option.textContent = op;
+                        opSelect.appendChild(option);
+                    });
                 console.log('Options added, total options:', opSelect.options.length); // Отладка
             }
 
@@ -315,11 +321,11 @@
                         </select>
                     </label>
                     <label>Сколько пачек/рулонов ткани ушло на настил? 
-                        <input type="number" class="packs-count" min="1" inputmode="decimal">
+                        <input type="number" class="packs-count" min="1" inputmode="decimal" enterkeyhint="done">
                     </label>
                     <div class="weights-container"></div>
                     <label>Укажите кол-во слоев в настиле: 
-                        <input type="number" class="layers" min="1" inputmode="decimal">
+                        <input type="number" class="layers" min="1" inputmode="decimal" enterkeyhint="done">
                     </label>
                     <table class="kroy-table">
                         <thead>
@@ -376,6 +382,7 @@
                     input.className = 'weights-input';
                     input.placeholder = `Вес пачки ${i} (кг)`;
                     input.inputMode = 'decimal';
+                    input.enterKeyHint = 'done';
                     weightsContainer.appendChild(input);
                 }
             }
@@ -390,6 +397,8 @@
                     const packInput = document.createElement('input');
                     packInput.type = 'text';
                     packInput.placeholder = 'Номер пачки';
+                    packInput.inputMode = 'numeric';
+                    packInput.enterKeyHint = 'done';
                     packCell.appendChild(packInput);
                     row.appendChild(packCell);
                     const artikulCell = document.createElement('td');
@@ -431,6 +440,7 @@
                     qtyInput.placeholder = 'Кол-во';
                     qtyInput.min = '1';
                     qtyInput.inputMode = 'decimal';
+                    qtyInput.enterKeyHint = 'done';
                     qtyCell.appendChild(qtyInput);
                     row.appendChild(qtyCell);
                     tbody.appendChild(row);
@@ -449,6 +459,7 @@
                     qtyInput.step = '1';
                     qtyInput.placeholder = 'Кол-во';
                     qtyInput.inputMode = 'decimal';
+                    qtyInput.enterKeyHint = 'done';
                     qtyCell.appendChild(qtyInput);
                     row.appendChild(qtyCell);
                     tbody.appendChild(row);
@@ -459,6 +470,8 @@
                     const packInput = document.createElement('input');
                     packInput.type = 'text';
                     packInput.placeholder = 'Номер пачки';
+                    packInput.inputMode = 'numeric';
+                    packInput.enterKeyHint = 'done';
                     packCell.appendChild(packInput);
                     row.appendChild(packCell);
                     const artikulCell = document.createElement('td');
@@ -612,11 +625,11 @@
                                 ${FABRIC_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}
                             </select>
                         </label>
-                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1" inputmode="decimal"></label>
+                        <label>Кол-во слоев: <input type="number" id="layers-special" min="1" inputmode="decimal" enterkeyhint="done"></label>
                     `;
                 } else if (op === 'Нарезка бейки') {
                     container.innerHTML = `
-                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1" inputmode="decimal"></label>
+                        <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1" inputmode="decimal" enterkeyhint="done"></label>
                     `;
                 } else if (op === 'Отгрузка') {
                     container.innerHTML = `
@@ -632,8 +645,8 @@
                     addRow('otgruzka');
                 } else if (op === 'Почасовая оплата') {
                     container.innerHTML = `
-                        <label>Кол-во часов работы: <input type="number" id="hours" min="0" step="0.1" inputmode="decimal"></label>
-                        <label>Оклад за 6 дней работы по 8 часов: <input type="number" id="salary" min="0" step="0.01" inputmode="decimal"></label>
+                        <label>Кол-во часов работы: <input type="number" id="hours" min="0" step="0.1" inputmode="decimal" enterkeyhint="done"></label>
+                        <label>Оклад за 6 дней работы по 8 часов: <input type="number" id="salary" min="0" step="0.01" inputmode="decimal" enterkeyhint="done"></label>
                     `;
                 }
             }
@@ -731,6 +744,7 @@
     </script>
 </body>
 </html>
+
 
 
 
