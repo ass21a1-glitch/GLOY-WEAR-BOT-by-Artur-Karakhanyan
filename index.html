@@ -100,6 +100,17 @@
             margin-top: 15px;
             flex-wrap: wrap;
         }
+        /* Стиль для кнопки переключения операций */
+        .toggle-btn {
+            background-color: #28a745; 
+            color: white; 
+            padding: 12px 20px; 
+            border: none; 
+            cursor: pointer; 
+            margin-left: 10px; 
+            min-height: 44px; 
+        }
+        .toggle-btn:hover { background-color: #218838; }
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -125,6 +136,7 @@
         <select id="operation-select">
             <option value="">Выберите...</option>
         </select>
+        <button id="toggle-operations" class="toggle-btn">Показать все операции</button>
         <button id="next-op" class="disabled">Далее</button>
     </div>
 
@@ -189,6 +201,7 @@
             let currentStep = 'operation-step';
             let data = { reports: [] };
             let nastilCounter = 0;
+            let showAllOperations = false; // Флаг для показа всех операций
 
             // Инициализация Telegram Web App
             Telegram.WebApp.ready();
@@ -204,11 +217,11 @@
             }
             console.log('userOperations after init:', userOperations.length, userOperations); // Отладка
 
-            // Заполняем селект
-            const opSelect = document.getElementById('operation-select');
-            if (opSelect && userOperations.length > 0) {
+            // Функция заполнения селекта
+            function fillOperationsSelect(ops) {
+                const opSelect = document.getElementById('operation-select');
                 opSelect.innerHTML = '<option value="">Выберите...</option>';
-                userOperations.forEach(op => {
+                ops.forEach(op => {
                     const option = document.createElement('option');
                     option.value = op;
                     option.textContent = op;
@@ -216,6 +229,9 @@
                 });
                 console.log('Options added, total options:', opSelect.options.length); // Отладка
             }
+
+            // Заполняем селект по умолчанию
+            fillOperationsSelect(userOperations);
 
             // Функция показа шага
             function showStep(stepId) {
@@ -253,6 +269,27 @@
                 } else {
                     showStep('other-table-step');
                     initOther(op);
+                }
+            });
+
+            // Обработчик для кнопки переключения операций
+            document.getElementById('toggle-operations').addEventListener('click', function() {
+                showAllOperations = !showAllOperations;
+                const btn = this;
+                if (showAllOperations) {
+                    fillOperationsSelect(OPERATIONS);
+                    btn.textContent = 'Показать мои операции';
+                } else {
+                    fillOperationsSelect(userOperations);
+                    btn.textContent = 'Показать все операции';
+                }
+                // Сбрасываем выбор, если текущий опшен не в новом списке
+                const select = document.getElementById('operation-select');
+                const currentValue = select.value;
+                if (currentValue && !Array.from(select.options).some(opt => opt.value === currentValue)) {
+                    select.value = '';
+                    document.getElementById('next-op').classList.remove('enabled');
+                    document.getElementById('next-op').classList.add('disabled');
                 }
             });
 
@@ -684,4 +721,5 @@
     </script>
 </body>
 </html>
+
 
