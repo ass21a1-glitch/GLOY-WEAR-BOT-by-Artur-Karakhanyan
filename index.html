@@ -117,6 +117,21 @@ background-color: blue;
 color: white;
 }
 .submit-btn:hover { background-color: darkblue; }
+/* Стиль для сообщения */
+#message {
+display: none;
+padding: 20px;
+background: lightgreen;
+color: green;
+text-align: center;
+font-size: 18px;
+border-radius: 5px;
+margin: 20px 0;
+}
+#message.error {
+background: lightcoral;
+color: red;
+}
 @media (max-width: 600px) {
 body {
 padding: 10px;
@@ -139,6 +154,7 @@ body { color: white; }
 </style>
 </head>
 <body>
+<div id="message"></div>
 <div id="operation-step" class="step active">
 <h2>Выберите операцию</h2>
 <select id="operation-select">
@@ -722,7 +738,10 @@ const PACK_SIZES = ["0,5", "1"];
 
     function submitReport() {
         if (data.reports.length === 0 && !data.operation) {
-            alert("Нет данных для отправки. Добавьте хотя бы одну операцию.");
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = 'Произошла ошибка';
+            messageEl.classList.add('error');
+            messageEl.style.display = 'block';
             return;
         }
         if (data.operation) {
@@ -805,7 +824,11 @@ const PACK_SIZES = ["0,5", "1"];
         }
         console.log("Sending data:", JSON.stringify(data.reports));
         Telegram.WebApp.sendData(JSON.stringify(data.reports));
-        Telegram.WebApp.close();
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу';
+        messageEl.classList.remove('error');
+        messageEl.style.display = 'block';
+        setTimeout(() => Telegram.WebApp.close(), 3000);
     }
 
     // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
