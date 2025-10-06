@@ -1,3 +1,4 @@
+вот мой веб
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -737,99 +738,162 @@ const PACK_SIZES = ["0,5", "1"];
     }
 
     function submitReport() {
-        if (data.reports.length === 0 && !data.operation) {
-            const messageEl = document.getElementById('message');
-            messageEl.textContent = 'Произошла ошибка';
-            messageEl.classList.add('error');
-            messageEl.style.display = 'block';
-            return;
-        }
-        if (data.operation) {
-            const report = { operation: data.operation };
-            if (data.operation === 'Крой' || data.operation === 'Срез') {
-                report.nastils = [];
-                for (let i = 1; i <= nastilCounter; i++) {
-                    const section = document.getElementById(`nastil-${i}`);
-                    if (!section) continue;
-                    const nastilData = {
-                        fabric_type: section.querySelector('.fabric-type').value,
-                        color: section.querySelector('.fabric-color').value,
-                        packs_count: parseInt(section.querySelector('.packs-count').value),
-                        weights: Array.from(section.querySelectorAll('.weights-input')).map(inp => inp.value),
-                        layers: parseInt(section.querySelector('.layers').value),
-                        table: []
-                    };
-                    const rows = section.querySelectorAll('.kroy-tbody tr');
-                    rows.forEach(row => {
-                        const inputs = row.querySelectorAll('input, select');
-                        const packNum = inputs[0].value;
-                        const artikul = inputs[1].value;
-                        const size = inputs[2].value;
-                        const packSize = inputs[3].value;
-                        if (packNum && artikul && size && packSize) {
-                            nastilData.table.push({ pack_num: packNum, artikul: artikul, size: size, pack_size: packSize });
-                        }
-                    });
-                    report.nastils.push(nastilData);
-                }
-            } else if (data.operation === 'Настил') {
-                report.nastils = [];
-                for (let i = 1; i <= nastilBlockCounter; i++) {
-                    const block = document.getElementById(`nastil-block-${i}`);
-                    if (!block) continue;
-                    const nastilData = {
-                        fabric_type: block.querySelector('.fabric-type').value,
-                        layers: parseInt(block.querySelector('.layers').value)
-                    };
-                    report.nastils.push(nastilData);
-                }
-            } else if (['Нарезка бейки', 'Почасовая оплата'].includes(data.operation)) {
-                report.special = {};
-                const container = document.getElementById('special-container');
-                const inputs = container.querySelectorAll('input, select');
-                inputs.forEach(inp => {
-                    report.special[inp.id] = inp.value;
-                });
-            } else if (data.operation === 'Отгрузка') {
-                const tbody = document.getElementById('otgruzka-tbody');
-                const rows = tbody.querySelectorAll('tr');
-                const shipments = [];
-                rows.forEach(row => {
-                    const inputs = row.querySelectorAll('input');
-                    const date = inputs[0].value;
-                    const qty = inputs[1].value;
-                    if (date && qty) {
-                        shipments.push({ date: date, qty: qty });
-                    }
-                });
-                report.special = { shipments: shipments };
-            } else {
-                const tbody = document.getElementById('other-tbody');
-                const rows = tbody.querySelectorAll('tr');
-                const tableData = [];
+    if (data.reports.length === 0 && !data.operation) {
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = 'Произошла ошибка';
+        messageEl.classList.add('error');
+        messageEl.style.display = 'block';
+        return;
+    }
+
+    let reportsToSend = [...data.reports];
+    
+    // Если есть текущая операция, добавляем ее в отчеты
+    if (data.operation) {
+        const report = { operation: data.operation };
+        
+        if (data.operation === 'Крой' || data.operation === 'Срез') {
+            report.nastils = [];
+            for (let i = 1; i <= nastilCounter; i++) {
+                const section = document.getElementById(`nastil-${i}`);
+                if (!section) continue;
+                
+                const nastilData = {
+                    fabric_type: section.querySelector('.fabric-type').value,
+                    color: section.querySelector('.fabric-color').value,
+                    packs_count: parseInt(section.querySelector('.packs-count').value) || 0,
+                    weights: Array.from(section.querySelectorAll('.weights-input')).map(inp => parseFloat(inp.value) || 0),
+                    layers: parseInt(section.querySelector('.layers').value) || 0,
+                    table: []
+                };
+                
+                const rows = section.querySelectorAll('.kroy-tbody tr');
                 rows.forEach(row => {
                     const inputs = row.querySelectorAll('input, select');
                     const packNum = inputs[0].value;
                     const artikul = inputs[1].value;
-                    const color = inputs[2].value;
-                    const size = inputs[3].value;
-                    const qty = inputs[4].value;
-                    if (packNum && artikul && color && size && qty) {
-                        tableData.push({ pack_num: packNum, artikul: artikul, color: color, size: size, qty: qty });
+                    const size = inputs[2].value;
+                    const packSize = inputs[3].value;
+                    
+                    if (packNum && artikul && size && packSize) {
+                        nastilData.table.push({ 
+                            pack_num: packNum, 
+                            artikul: artikul, 
+                            size: size, 
+                            pack_size: packSize 
+                        });
                     }
                 });
-                report.table = tableData;
+                
+                if (nastilData.fabric_type && nastilData.layers > 0) {
+                    report.nastils.push(nastilData);
+                }
             }
-            data.reports.push(report);
+        } else if (data.operation === 'Настил') {
+            report.nastils = [];
+            for (let i = 1; i <= nastilBlockCounter; i++) {
+                const block = document.getElementById(`nastil-block-${i}`);
+                if (!block) continue;
+                
+                const nastilData = {
+                    fabric_type: block.querySelector('.fabric-type').value,
+                    layers: parseInt(block.querySelector('.layers').value) || 0
+                };
+                
+                if (nastilData.fabric_type && nastilData.layers > 0) {
+                    report.nastils.push(nastilData);
+                }
+            }
+        } else if (['Нарезка бейки', 'Почасовая оплата'].includes(data.operation)) {
+            report.special = {};
+            const container = document.getElementById('special-container');
+            const inputs = container.querySelectorAll('input, select');
+            
+            inputs.forEach(inp => {
+                if (inp.type === 'number') {
+                    report.special[inp.id] = parseFloat(inp.value) || 0;
+                } else {
+                    report.special[inp.id] = inp.value;
+                }
+            });
+        } else if (data.operation === 'Отгрузка') {
+            const tbody = document.getElementById('otgruzka-tbody');
+            const rows = tbody.querySelectorAll('tr');
+            const shipments = [];
+            
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const date = inputs[0].value;
+                const qty = inputs[1].value;
+                
+                if (date && qty) {
+                    shipments.push({ 
+                        date: date, 
+                        qty: parseInt(qty) || 0 
+                    });
+                }
+            });
+            
+            report.special = { shipments: shipments };
+        } else {
+            // Для других операций
+            const tbody = document.getElementById('other-tbody');
+            const rows = tbody.querySelectorAll('tr');
+            const tableData = [];
+            
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input, select');
+                const packNum = inputs[0].value;
+                const artikul = inputs[1].value;
+                const color = inputs[2].value;
+                const size = inputs[3].value;
+                const qty = inputs[4].value;
+                
+                if (packNum && artikul && color && size && qty) {
+                    tableData.push({ 
+                        pack_num: packNum, 
+                        artikul: artikul, 
+                        color: color, 
+                        size: size, 
+                        qty: parseInt(qty) || 0 
+                    });
+                }
+            });
+            
+            report.table = tableData;
         }
-        console.log("Sending data:", JSON.stringify(data.reports));
-        Telegram.WebApp.sendData(JSON.stringify(data.reports));
-        const messageEl = document.getElementById('message');
-        messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу';
-        messageEl.classList.remove('error');
-        messageEl.style.display = 'block';
-        setTimeout(() => Telegram.WebApp.close(), 3000);
+        
+        // Добавляем только если есть данные
+        if (
+            (report.nastils && report.nastils.length > 0) ||
+            (report.table && report.table.length > 0) ||
+            (report.special && Object.keys(report.special).length > 0)
+        ) {
+            reportsToSend.push(report);
+        }
     }
+
+    // Проверяем, есть ли вообще отчеты для отправки
+    if (reportsToSend.length === 0) {
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = 'Нет данных для отправки. Заполните отчет.';
+        messageEl.classList.add('error');
+        messageEl.style.display = 'block';
+        return;
+    }
+
+    console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
+    
+    // Отправляем данные
+    Telegram.WebApp.sendData(JSON.stringify(reportsToSend));
+    
+    const messageEl = document.getElementById('message');
+    messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу!';
+    messageEl.classList.remove('error');
+    messageEl.style.display = 'block';
+    
+    setTimeout(() => Telegram.WebApp.close(), 3000);
+}
 
     // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
     document.addEventListener('keydown', function(event) {
