@@ -464,7 +464,7 @@ const PACK_SIZES = ["0,5", "1"];
             packInput.type = 'text';
             packInput.placeholder = 'Пачка №';
             packInput.inputMode = 'numeric';
-            packInput.enterKeyHint = 'done';
+            packInput.enterkeyHint = 'done';
             packCell.appendChild(packInput);
             row.appendChild(packCell);
             const artikulCell = document.createElement('td');
@@ -506,7 +506,7 @@ const PACK_SIZES = ["0,5", "1"];
             qtyInput.placeholder = 'Кол-во';
             qtyInput.min = '1';
             qtyInput.inputMode = 'numeric';
-            qtyInput.enterKeyHint = 'done';
+            qtyInput.enterkeyHint = 'done';
             qtyCell.appendChild(qtyInput);
             row.appendChild(qtyCell);
             tbody.appendChild(row);
@@ -525,7 +525,7 @@ const PACK_SIZES = ["0,5", "1"];
             qtyInput.step = '1';
             qtyInput.placeholder = 'Кол-во';
             qtyInput.inputMode = 'numeric';
-            qtyInput.enterKeyHint = 'done';
+            qtyInput.enterkeyHint = 'done';
             qtyCell.appendChild(qtyInput);
             row.appendChild(qtyCell);
             tbody.appendChild(row);
@@ -537,7 +537,7 @@ const PACK_SIZES = ["0,5", "1"];
             packInput.type = 'text';
             packInput.placeholder = 'Пачка №';
             packInput.inputMode = 'numeric';
-            packInput.enterKeyHint = 'done';
+            packInput.enterkeyHint = 'done';
             packCell.appendChild(packInput);
             row.appendChild(packCell);
             const artikulCell = document.createElement('td');
@@ -721,6 +721,10 @@ const PACK_SIZES = ["0,5", "1"];
     }
 
     function submitReport() {
+        if (data.reports.length === 0 && !data.operation) {
+            alert("Нет данных для отправки. Добавьте хотя бы одну операцию.");
+            return;
+        }
         if (data.operation) {
             const report = { operation: data.operation };
             if (data.operation === 'Крой' || data.operation === 'Срез') {
@@ -799,6 +803,7 @@ const PACK_SIZES = ["0,5", "1"];
             }
             data.reports.push(report);
         }
+        console.log("Sending data:", JSON.stringify(data.reports));
         Telegram.WebApp.sendData(JSON.stringify(data.reports));
         Telegram.WebApp.close();
     }
@@ -826,11 +831,3 @@ const PACK_SIZES = ["0,5", "1"];
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
