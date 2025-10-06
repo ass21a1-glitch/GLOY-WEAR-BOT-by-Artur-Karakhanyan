@@ -58,6 +58,12 @@ function sendData() {
 document.getElementById('userInput').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') sendData();
 });
+if (Telegram.WebApp) {
+    console.log("Web App инициализирован");
+} else {
+    console.log("Ошибка: Telegram.WebApp не доступен");
+}
+
 </script>
 </body>
 </html>
