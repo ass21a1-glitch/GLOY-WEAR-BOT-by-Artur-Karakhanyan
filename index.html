@@ -237,8 +237,11 @@ const PACK_SIZES = ["0,5", "1"];
     let showAllOperations = false; // Флаг для показа всех операций
 
     // Инициализация Telegram Web App
+    console.log("Инициализация Telegram Web App...");
     Telegram.WebApp.ready();
+    console.log("Telegram WebApp готов:", Telegram.WebApp);
     const initData = Telegram.WebApp.initDataUnsafe;
+    console.log("Init data:", initData);
     let userOperations = OPERATIONS;
     if (initData && initData.user) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -884,6 +887,10 @@ const PACK_SIZES = ["0,5", "1"];
     console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
     
     // Проверяем доступность Telegram WebApp
+    console.log("Проверяем доступность Telegram WebApp...");
+    console.log("typeof Telegram:", typeof Telegram);
+    console.log("Telegram.WebApp:", Telegram.WebApp);
+    
     if (typeof Telegram === 'undefined' || !Telegram.WebApp) {
         console.error("Telegram WebApp не доступен!");
         const messageEl = document.getElementById('message');
@@ -891,6 +898,15 @@ const PACK_SIZES = ["0,5", "1"];
         messageEl.classList.add('error');
         messageEl.style.display = 'block';
         return;
+    }
+    
+    // Проверяем, что мы в Telegram
+    if (!Telegram.WebApp.initData) {
+        console.warn("WebApp не запущен в Telegram! Данные могут не передаваться.");
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = 'Внимание: WebApp не запущен в Telegram!';
+        messageEl.classList.add('error');
+        messageEl.style.display = 'block';
     }
     
     console.log("Telegram WebApp доступен:", Telegram.WebApp);
