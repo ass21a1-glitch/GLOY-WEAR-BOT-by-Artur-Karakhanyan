@@ -947,27 +947,14 @@ function submitReport() {
     console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
     
     // Отправляем данные
-// Вместо: Telegram.WebApp.sendData(JSON.stringify(reportsToSend));
-// Добавьте:
-const userId = Telegram.WebApp.initDataUnsafe?.user?.id || 'unknown'; // Или другой источник user_id
-const dataToSend = { user_id: userId, reports: reportsToSend };
-fetch('https://script.google.com/macros/s/AKfycbzKAEYWIsBvk3XfnkxCFsrWNTrgjyZqIG-sUzKXNbl7uYE08_aoZFjTUU4Pyq7II-omYA/exec', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(dataToSend)
-}).then(response => response.text()).then(result => {
-  console.log(result);
-  // Показать сообщение и закрыть
-  const messageEl = document.getElementById('message');
-  messageEl.textContent = result.includes('success') ? 'Отчет отправлен. Спасибо!' : 'Ошибка: ' + result;
-  messageEl.classList.toggle('error', !result.includes('success'));
-  messageEl.style.display = 'block';
-  setTimeout(() => window.close(), 3000);
-}).catch(error => {
-  console.error(error);
-  // Обработка ошибки
-});
-
+    Telegram.WebApp.sendData(JSON.stringify(reportsToSend));
+    
+    const messageEl = document.getElementById('message');
+    messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу!';
+    messageEl.classList.remove('error');
+    messageEl.style.display = 'block';
+    
+    setTimeout(() => Telegram.WebApp.close(), 3000);
 }
 
     // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
