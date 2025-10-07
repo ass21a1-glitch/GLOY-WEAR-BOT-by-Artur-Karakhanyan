@@ -947,7 +947,7 @@ function submitReport() {
     console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
     
     // Отправляем данные через openTelegramLink вместо sendData
-    const botUsername = '@gloy_wear_bot'; // ЗАМЕНИТЕ НА РЕАЛЬНЫЙ USERNAME ВАШЕГО БОТА, например 'my_report_bot'
+    const botUsername = 'gloy_wear_bot'; // ЗАМЕНИТЕ НА РЕАЛЬНЫЙ USERNAME ВАШЕГО БОТА, например 'my_report_bot'
     const dataStr = encodeURIComponent(JSON.stringify(reportsToSend));
     console.log('=== ОТПРАВКА ДАННЫХ ===');
     console.log('reportsToSend:', reportsToSend);
