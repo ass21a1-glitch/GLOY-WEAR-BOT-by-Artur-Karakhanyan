@@ -951,7 +951,7 @@ function submitReport() {
 // Добавьте:
 const userId = Telegram.WebApp.initDataUnsafe?.user?.id || 'unknown'; // Или другой источник user_id
 const dataToSend = { user_id: userId, reports: reportsToSend };
-fetch('YOUR_APPS_SCRIPT_WEB_APP_URL', {
+fetch('https://script.google.com/macros/s/AKfycbzKAEYWIsBvk3XfnkxCFsrWNTrgjyZqIG-sUzKXNbl7uYE08_aoZFjTUU4Pyq7II-omYA/exec', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(dataToSend)
