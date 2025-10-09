@@ -956,7 +956,7 @@ function submitReport() {
     messageEl.classList.remove('error');
     messageEl.style.display = 'block';
     
-    setTimeout(() => Telegram.WebApp.close(), 3000);
+    setTimeout(() => tg.close(), 3000);
 }
 
     // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
