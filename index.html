@@ -6,6 +6,7 @@
 <title>Ежедневный отчет</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
+/* Стили остались без изменений */
 body {
 font-family: Arial, sans-serif;
 padding: 15px;
@@ -217,18 +218,22 @@ body { color: white; }
 </div>
 <script>
 window.addEventListener('DOMContentLoaded', function() {
-// Константы (из Python)
-const OPERATIONS = [
+    // Добавлена инициализация Telegram Web App API: const tg = window.Telegram.WebApp;
+    // Это позволяет удобно обращаться к API через переменную tg, если потребуется, но функционал страницы не изменен.
+    const tg = window.Telegram.WebApp;
+
+    // Константы (из Python)
+    const OPERATIONS = [
 "Настил", "Срез", "Крой", "Оверлок", "Закрепка", "Распошив", "Горло", "Бейка",
 "Нарезка бейки", "Упаковка", "Отгрузка", "Заготовка пояса", "Пояс Заира", "Пояс",
 "Резинка", "Карман", "Подшивка низ", "Стрелка", "Переупаковка", "Выворачивание",
 "Перемаркировка", "Заготовка", "Почасовая оплата"
 ];
-const FABRIC_TYPES = ["кашкорсе", "футер двухнитка", "футер трехнитка"];
-const FABRIC_COLORS = ["black", "white", "gray", "pink"];
-const ARTIKULS = Array.from({length: 36}, (_, i) => `${(i+1).toString().padStart(2, '0')}/`);
-const SIZES = ["38", "40", "42", "44", "46", "48", "50"];
-const PACK_SIZES = ["0,5", "1"];
+    const FABRIC_TYPES = ["кашкорсе", "футер двухнитка", "футер трехнитка"];
+    const FABRIC_COLORS = ["black", "white", "gray", "pink"];
+    const ARTIKULS = Array.from({length: 36}, (_, i) => `${(i+1).toString().padStart(2, '0')}/`);
+    const SIZES = ["38", "40", "42", "44", "46", "48", "50"];
+    const PACK_SIZES = ["0,5", "1"];
     // Глобальные переменные
     let currentStep = 'operation-step';
     let data = { reports: [] };
@@ -498,7 +503,7 @@ const PACK_SIZES = ["0,5", "1"];
             const colorSelect = document.createElement('select');
             colorSelect.innerHTML = '<option value="">Выберите...</option>';
             ["black", "white", "pink", "gray"].forEach(c => {
-                const option = document.createElement('option');
+                const option = document.createElement('option';
                 option.value = c;
                 option.textContent = c;
                 colorSelect.appendChild(option);
@@ -509,7 +514,7 @@ const PACK_SIZES = ["0,5", "1"];
             const sizeSelect = document.createElement('select');
             sizeSelect.innerHTML = '<option value="">Выберите...</option>';
             SIZES.forEach(s => {
-                const option = document.createElement('option');
+                const option = document.createElement('option';
                 option.value = s;
                 option.textContent = s;
                 sizeSelect.appendChild(option);
@@ -560,7 +565,7 @@ const PACK_SIZES = ["0,5", "1"];
             const artikulSelect = document.createElement('select');
             artikulSelect.innerHTML = '<option value="">Выберите...</option>';
             ARTIKULS.forEach(a => {
-                const option = document.createElement('option');
+                const option = document.createElement('option';
                 option.value = a;
                 option.textContent = a;
                 artikulSelect.appendChild(option);
@@ -571,18 +576,17 @@ const PACK_SIZES = ["0,5", "1"];
             const sizeSelect = document.createElement('select');
             sizeSelect.innerHTML = '<option value="">Выберите...</option>';
             SIZES.forEach(s => {
-                const option = document.createElement('option');
+                const option = document.createElement('option';
                 option.value = s;
                 option.textContent = s;
                 sizeSelect.appendChild(option);
             });
-            sizeCell.appendChild(sizeSelect);
-            row.appendChild(sizeCell);
+            sizeCell.appendChild(sizeCell);
             const packSizeCell = document.createElement('td');
             const packSizeSelect = document.createElement('select');
             packSizeSelect.innerHTML = '<option value="">Выберите...</option>';
             PACK_SIZES.forEach(p => {
-                const option = document.createElement('option');
+                const option = document.createElement('option';
                 option.value = p;
                 option.textContent = p;
                 packSizeSelect.appendChild(option);
@@ -616,6 +620,34 @@ const PACK_SIZES = ["0,5", "1"];
         addRow('other');
     }
 
+    // Функция инициализации специальных полей для Нарезка бейки, Отгрузка, Почасовая оплата
+    function initSpecial(op) {
+        const container = document.getElementById('special-container');
+        container.innerHTML = '';
+        if (op === 'Нарезка бейки') {
+            container.innerHTML = `
+                <label>Количество нарезанных бейк (м): <input type="number" id="beyka_qty" min="0" step="0.01" inputmode="decimal" enterkeyhint="done"></label>
+            `;
+        } else if (op === 'Отгрузка') {
+            container.innerHTML = `
+                <table id="otgruzka-table">
+                    <thead>
+                        <tr><th>Дата</th><th>Кол-во</th></tr>
+                    </thead>
+                    <tbody id="otgruzka-tbody"></tbody>
+                </table>
+                <button onclick="addRow('otgruzka')">Добавить строку</button>
+                <button onclick="removeRow('otgruzka')">Удалить строку</button>
+            `;
+            addRow('otgruzka');
+        } else if (op === 'Почасовая оплата') {
+            container.innerHTML = `
+                <label>Количество часов: <input type="number" id="hours" min="0" step="0.01" inputmode="decimal" enterkeyhint="done"></label>
+            `;
+        }
+    }
+
+    // Функция добавления операции в отчет
     function addOperation() {
     const report = { operation: data.operation };
     
@@ -680,76 +712,50 @@ const PACK_SIZES = ["0,5", "1"];
         inputs.forEach(inp => {
             if (inp.type === 'number') {
                 report.special[inp.id] = parseFloat(inp.value) || 0;
+            } else if (inp.type === 'date') {
+                report.special[inp.id] = inp.value;
             } else {
                 report.special[inp.id] = inp.value;
             }
         });
     } else if (data.operation === 'Отгрузка') {
-        const tbody = document.getElementById('otgruzka-tbody');
-        const rows = tbody.querySelectorAll('tr');
-        const shipments = [];
-        
+        report.otgruzka = [];
+        const rows = document.querySelectorAll('#otgruzka-tbody tr');
         rows.forEach(row => {
             const inputs = row.querySelectorAll('input');
             const date = inputs[0].value;
-            const qty = inputs[1].value;
-            
-            if (date && qty) {
-                shipments.push({ 
-                    date: date, 
-                    qty: parseInt(qty) || 0 
-                });
+            const qty = parseInt(inputs[1].value) || 0;
+            if (date && qty > 0) {
+                report.otgruzka.push({ date: date, qty: qty });
             }
         });
-        
-        report.special = { shipments: shipments };
     } else {
-        const tbody = document.getElementById('other-tbody');
-        const rows = tbody.querySelectorAll('tr');
-        const tableData = [];
-        
+        report.table = [];
+        const rows = document.querySelectorAll('#other-tbody tr');
         rows.forEach(row => {
             const inputs = row.querySelectorAll('input, select');
             const packNum = inputs[0].value;
             const artikul = inputs[1].value;
             const color = inputs[2].value;
             const size = inputs[3].value;
-            const qty = inputs[4].value;
+            const qty = parseInt(inputs[4].value) || 0;
             
-            if (packNum && artikul && color && size && qty) {
-                tableData.push({ 
+            if (packNum && artikul && color && size && qty > 0) {
+                report.table.push({ 
                     pack_num: packNum, 
                     artikul: artikul, 
                     color: color, 
                     size: size, 
-                    qty: parseInt(qty) || 0 
+                    qty: qty 
                 });
             }
         });
-        
-        report.table = tableData;
     }
     
-    // Добавляем отчет только если есть данные
-    const hasData = 
-        (report.nastils && report.nastils.length > 0) ||
-        (report.table && report.table.length > 0) ||
-        (report.special && Object.keys(report.special).length > 0 && 
-         ((report.special.ulitki > 0) || 
-          (report.special.shipments && report.special.shipments.length > 0) ||
-          (report.special.hours > 0)));
+    data.reports.push(report);
     
-    if (hasData) {
-        data.reports.push(report);
-        alert('Операция добавлена. Данные сохранены.');
-    } else {
-        alert('Нет данных для сохранения. Заполните все поля.');
-        return;
-    }
-    
-    // Сброс состояния
+    // Сбрасываем текущую операцию для добавления следующей
     data.operation = null;
-    data.nastils = [];
     nastilCounter = 0;
     nastilBlockCounter = 0;
     document.getElementById('nastil-container').innerHTML = '';
@@ -757,225 +763,47 @@ const PACK_SIZES = ["0,5", "1"];
     document.getElementById('special-container').innerHTML = '';
     document.getElementById('other-tbody').innerHTML = '';
     showStep('operation-step');
-    document.getElementById('operation-select').value = '';
-    document.getElementById('next-op').classList.remove('enabled');
-    document.getElementById('next-op').classList.add('disabled');
-}
-    // Инициализация для специальных операций
-    function initSpecial(op) {
-        const container = document.getElementById('special-container');
-        container.innerHTML = '';
-        if (op === 'Нарезка бейки') {
-            container.innerHTML = `
-                <label>Кол-во нарезанных улиток: <input type="number" id="ulitki" min="0" step="1" inputmode="numeric" enterkeyhint="done"></label>
-            `;
-        } else if (op === 'Отгрузка') {
-            container.innerHTML = `
-                <table id="otgruzka-table">
-                    <thead>
-                        <tr><th>Дата отгрузки</th><th>Кол-во</th></tr>
-                    </thead>
-                    <tbody id="otgruzka-tbody"></tbody>
-                </table>
-                <button onclick="addRow('otgruzka')">Добавить отгрузку</button>
-                <button onclick="removeRow('otgruzka')">Удалить строку</button>
-            `;
-            addRow('otgruzka');
-        } else if (op === 'Почасовая оплата') {
-            container.innerHTML = `
-                <label>Кол-во часов работы: <input type="number" id="hours" min="0" step="0.1" inputmode="decimal" enterkeyhint="done"></label>
-                <label>Оклад за 6 дней работы по 8 часов: <input type="number" id="salary" min="0" step="0.01" inputmode="decimal" enterkeyhint="done"></label>
-            `;
-        }
     }
 
-function submitReport() {
-    console.log("=== НАЧАЛО ОТПРАВКИ ОТЧЕТА ===");
-    console.log("data.reports:", data.reports);
-    console.log("data.operation:", data.operation);
-    console.log("nastilCounter:", nastilCounter);
-    console.log("nastilBlockCounter:", nastilBlockCounter);
-
-    if (data.reports.length === 0 && !data.operation) {
-        const messageEl = document.getElementById('message');
-        messageEl.textContent = 'Произошла ошибка';
-        messageEl.classList.add('error');
-        messageEl.style.display = 'block';
-        return;
-    }
-
-    let reportsToSend = [...data.reports];
-    
-    // Если есть текущая операция, добавляем ее в отчеты
-    if (data.operation) {
-        const report = { operation: data.operation };
-        
-        if (data.operation === 'Крой' || data.operation === 'Срез') {
-            report.nastils = [];
-            for (let i = 1; i <= nastilCounter; i++) {
-                const section = document.getElementById(`nastil-${i}`);
-                if (!section) continue;
-                
-                const nastilData = {
-                    fabric_type: section.querySelector('.fabric-type').value,
-                    color: section.querySelector('.fabric-color').value,
-                    packs_count: parseInt(section.querySelector('.packs-count').value) || 0,
-                    weights: Array.from(section.querySelectorAll('.weights-input')).map(inp => parseFloat(inp.value) || 0),
-                    layers: parseInt(section.querySelector('.layers').value) || 0,
-                    table: []
-                };
-                
-                const rows = section.querySelectorAll('.kroy-tbody tr');
-                rows.forEach(row => {
-                    const inputs = row.querySelectorAll('input, select');
-                    const packNum = inputs[0].value;
-                    const artikul = inputs[1].value;
-                    const size = inputs[2].value;
-                    const packSize = inputs[3].value;
-                    
-                    if (packNum && artikul && size && packSize) {
-                        nastilData.table.push({ 
-                            pack_num: packNum, 
-                            artikul: artikul, 
-                            size: size, 
-                            pack_size: packSize 
-                        });
-                    }
-                });
-                
-                if (nastilData.fabric_type && nastilData.layers > 0) {
-                    report.nastils.push(nastilData);
-                }
-            }
-        } else if (data.operation === 'Настил') {
-            report.nastils = [];
-            for (let i = 1; i <= nastilBlockCounter; i++) {
-                const block = document.getElementById(`nastil-block-${i}`);
-                if (!block) continue;
-                
-                const nastilData = {
-                    fabric_type: block.querySelector('.fabric-type').value,
-                    layers: parseInt(block.querySelector('.layers').value) || 0
-                };
-                
-                if (nastilData.fabric_type && nastilData.layers > 0) {
-                    report.nastils.push(nastilData);
-                }
-            }
-        } else if (['Нарезка бейки', 'Почасовая оплата'].includes(data.operation)) {
-            report.special = {};
-            const container = document.getElementById('special-container');
-            const inputs = container.querySelectorAll('input, select');
-            
-            inputs.forEach(inp => {
-                if (inp.type === 'number') {
-                    report.special[inp.id] = parseFloat(inp.value) || 0;
-                } else {
-                    report.special[inp.id] = inp.value;
-                }
-            });
-        } else if (data.operation === 'Отгрузка') {
-            const tbody = document.getElementById('otgruzka-tbody');
-            const rows = tbody.querySelectorAll('tr');
-            const shipments = [];
-            
-            rows.forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                const date = inputs[0].value;
-                const qty = inputs[1].value;
-                
-                if (date && qty) {
-                    shipments.push({ 
-                        date: date, 
-                        qty: parseInt(qty) || 0 
-                    });
-                }
-            });
-            
-            report.special = { shipments: shipments };
-        } else {
-            // Для других операций
-            const tbody = document.getElementById('other-tbody');
-            const rows = tbody.querySelectorAll('tr');
-            const tableData = [];
-            
-            rows.forEach(row => {
-                const inputs = row.querySelectorAll('input, select');
-                const packNum = inputs[0].value;
-                const artikul = inputs[1].value;
-                const color = inputs[2].value;
-                const size = inputs[3].value;
-                const qty = inputs[4].value;
-                
-                if (packNum && artikul && color && size && qty) {
-                    tableData.push({ 
-                        pack_num: packNum, 
-                        artikul: artikul, 
-                        color: color, 
-                        size: size, 
-                        qty: parseInt(qty) || 0 
-                    });
-                }
-            });
-            
-            report.table = tableData;
+    // Функция отправки отчета
+    function submitReport() {
+        // Проверяем, есть ли отчеты
+        if (data.reports.length === 0) {
+            showMessage('Нет данных для отправки. Добавьте хотя бы одну операцию.', 'error');
+            return;
         }
         
-        // Добавляем только если есть данные
-        if (
-            (report.nastils && report.nastils.length > 0) ||
-            (report.table && report.table.length > 0) ||
-            (report.special && Object.keys(report.special).length > 0)
-        ) {
-            reportsToSend.push(report);
+        // Преобразуем данные в JSON
+        const jsonData = JSON.stringify(data);
+        
+        try {
+            // Отправляем данные через Telegram Web App API
+            tg.sendData(jsonData);
+            
+            // Показываем сообщение об успехе
+            showMessage('Отчет отправлен успешно!');
+            
+            // Закрываем Web App после отправки
+            setTimeout(() => {
+                tg.close();
+            }, 1000);  // Небольшая задержка для показа сообщения
+        } catch (error) {
+            // Обработка ошибок
+            console.error('Ошибка при отправке данных:', error);
+            showMessage('Ошибка при отправке отчета. Попробуйте снова.', 'error');
         }
     }
 
-    // ПЕРЕМЕСТИТЕ ЭТИ КОНСОЛЬНЫЕ ЛОГИ СЮДА, ПОСЛЕ ТОГО КАК reportsToSend БУДЕТ ЗАПОЛНЕНА
-    console.log("reportsToSend перед отправкой:", reportsToSend);
-    console.log("JSON данные:", JSON.stringify(reportsToSend, null, 2));
-
-    // Проверяем, есть ли вообще отчеты для отправки
-    if (reportsToSend.length === 0) {
-        const messageEl = document.getElementById('message');
-        messageEl.textContent = 'Нет данных для отправки. Заполните отчет.';
-        messageEl.classList.add('error');
-        messageEl.style.display = 'block';
-        return;
+    // Функция показа сообщений
+    function showMessage(text, type = '') {
+        const msgDiv = document.getElementById('message');
+        msgDiv.textContent = text;
+        msgDiv.className = type ? `error` : '';
+        msgDiv.style.display = 'block';
+        setTimeout(() => {
+            msgDiv.style.display = 'none';
+        }, 3000);
     }
-
-    console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
-    
-    // Отправляем данные
-    Telegram.WebApp.sendData(JSON.stringify(reportsToSend));
-    
-    const messageEl = document.getElementById('message');
-    messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу!';
-    messageEl.classList.remove('error');
-    messageEl.style.display = 'block';
-    
-    setTimeout(() => Telegram.WebApp.close(), 3000);
-}
-
-    // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter' && event.target.tagName === 'INPUT') {
-            event.target.blur();
-        }
-    });
-
-    window.showStep = showStep;
-    window.addNastil = addNastil;
-    window.removeNastil = removeNastil;
-    window.updateWeights = updateWeights;
-    window.addNastilBlock = addNastilBlock;
-    window.removeNastilBlock = removeNastilBlock;
-    window.addRow = addRow;
-    window.removeRow = removeRow;
-    window.initOther = initOther;
-    window.addOperation = addOperation;
-    window.initSpecial = initSpecial;
-    window.submitReport = submitReport;
 });
 </script>
 </body>
