@@ -218,8 +218,7 @@ body { color: white; }
 <script>
 window.addEventListener('DOMContentLoaded', function() {
 // Константы (из Python)
-    const tg = window.Telegram.WebApp;  // <-- ВСТАВЬТЕ ЗДЕСЬ ЭТУ СТРОКУ
-    const OPERATIONS = [
+const OPERATIONS = [
 "Настил", "Срез", "Крой", "Оверлок", "Закрепка", "Распошив", "Горло", "Бейка",
 "Нарезка бейки", "Упаковка", "Отгрузка", "Заготовка пояса", "Пояс Заира", "Пояс",
 "Резинка", "Карман", "Подшивка низ", "Стрелка", "Переупаковка", "Выворачивание",
@@ -237,9 +236,9 @@ const PACK_SIZES = ["0,5", "1"];
     let nastilBlockCounter = 0; // Новый счетчик для блоков Настил
     let showAllOperations = false; // Флаг для показа всех операций
 
-// Инициализация Telegram Web App
-    tg.ready();
-    const initData = tg.initDataUnsafe;
+    // Инициализация Telegram Web App
+    Telegram.WebApp.ready();
+    const initData = Telegram.WebApp.initDataUnsafe;
     let userOperations = OPERATIONS;
     if (initData && initData.user) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -948,15 +947,14 @@ function submitReport() {
     console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
     
     // Отправляем данные
-    tg.sendData(JSON.stringify(reportsToSend));
-
+    Telegram.WebApp.sendData(JSON.stringify(reportsToSend));
     
     const messageEl = document.getElementById('message');
     messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу!';
     messageEl.classList.remove('error');
     messageEl.style.display = 'block';
     
-    setTimeout(() => tg.close(), 3000);
+    setTimeout(() => Telegram.WebApp.close(), 3000);
 }
 
     // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
