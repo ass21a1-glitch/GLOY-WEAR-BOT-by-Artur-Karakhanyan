@@ -229,6 +229,7 @@ const FABRIC_COLORS = ["black", "white", "gray", "pink"];
 const ARTIKULS = Array.from({length: 36}, (_, i) => `${(i+1).toString().padStart(2, '0')}/`);
 const SIZES = ["38", "40", "42", "44", "46", "48", "50"];
 const PACK_SIZES = ["0,5", "1"];
+const tg = window.Telegram?.WebApp; 
     // Глобальные переменные
     let currentStep = 'operation-step';
     let data = { reports: [] };
@@ -237,8 +238,8 @@ const PACK_SIZES = ["0,5", "1"];
     let showAllOperations = false; // Флаг для показа всех операций
 
     // Инициализация Telegram Web App
-    Telegram.WebApp.ready();
-    const initData = Telegram.WebApp.initDataUnsafe;
+    tg.ready();
+    const initData = tg.initDataUnsafe;
     let userOperations = OPERATIONS;
     if (initData && initData.user) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -947,14 +948,14 @@ function submitReport() {
     console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
     
     // Отправляем данные
-    Telegram.WebApp.sendData(JSON.stringify(reportsToSend));
+    tg.sendData(JSON.stringify(reportsToSend));
     
     const messageEl = document.getElementById('message');
     messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу!';
     messageEl.classList.remove('error');
     messageEl.style.display = 'block';
     
-    setTimeout(() => Telegram.WebApp.close(), 3000);
+    setTimeout(() => tg.close(), 3000);
 }
 
     // Добавление обработчика для скрытия клавиатуры на мобильных при нажатии Enter
