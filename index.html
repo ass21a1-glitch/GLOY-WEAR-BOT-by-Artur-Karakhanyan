@@ -796,6 +796,18 @@ function submitReport() {
     console.log("data.operation:", data.operation);
     console.log("nastilCounter:", nastilCounter);
     console.log("nastilBlockCounter:", nastilBlockCounter);
+   
+    // Добавьте проверку на наличие tg
+    if (!window.Telegram || !window.Telegram.WebApp) {
+        console.error("Telegram WebApp API не доступен. Откройте Web App через Telegram.");
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = 'Ошибка: Web App должен быть открыт через Telegram.';
+        messageEl.classList.add('error');
+        messageEl.style.display = 'block';
+        return;
+    }
+
+    const tg = window.Telegram.WebApp;
 
     if (data.reports.length === 0 && !data.operation) {
         const messageEl = document.getElementById('message');
@@ -946,7 +958,22 @@ function submitReport() {
     }
 
     console.log("Отправляемые данные:", JSON.stringify(reportsToSend, null, 2));
-    
+        try {
+        tg.sendData(JSON.stringify(reportsToSend));
+        console.log("sendData вызван успешно.");
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = 'Отчет отправлен. Спасибо за проделанную работу!';
+        messageEl.classList.remove('error');
+        messageEl.style.display = 'block';
+        setTimeout(() => tg.close(), 3000);
+    } catch (error) {
+        console.error("Ошибка при отправке данных:", error);
+        const messageEl = document.getElementById('message');
+        messageEl.textContent = `Ошибка отправки: ${error.message}. Попробуйте снова.`;
+        messageEl.classList.add('error');
+        messageEl.style.display = 'block';
+    }
+}
     // Отправляем данные
     tg.sendData(JSON.stringify(reportsToSend));
     
