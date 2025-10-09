@@ -236,16 +236,11 @@ const PACK_SIZES = ["0,5", "1"];
     let nastilBlockCounter = 0; // Новый счетчик для блоков Настил
     let showAllOperations = false; // Флаг для показа всех операций
 
-    // Инициализация Telegram Web App
-    Telegram.WebApp.ready();
-    const initData = Telegram.WebApp.initDataUnsafe;
-    let userOperations = OPERATIONS;
-    if (initData && initData.user) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const ops = urlParams.get('operations');
-        console.log('ops from URL:', ops); // Отладка
-        if (ops && ops.trim()) {
-            userOperations = decodeURIComponent(ops).split(',').map(op => op.trim()).filter(op => op);
+// Инициализация Telegram Web App
+const tg = window.Telegram.WebApp;
+tg.ready();  // Замените Telegram.WebApp.ready() на tg.ready()
+const initData = tg.initDataUnsafe;  // Замените Telegram.WebApp.initDataUnsafe на tg.initDataUnsafe
+;
         }
     }
     console.log('userOperations after init:', userOperations.length, userOperations); // Отладка
